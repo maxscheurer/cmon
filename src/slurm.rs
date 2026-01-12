@@ -970,7 +970,8 @@ impl SlurmInterface {
     /// # Returns
     /// Vector of unique partition names, sorted alphabetically, with default partition asterisk removed
     pub fn get_partitions(&self) -> Result<Vec<String>> {
-        let output = Command::new(format!("{}/sinfo", self.slurm_bin_path))
+        let sinfo_path = self.slurm_bin_path.join("sinfo");
+        let output = Command::new(sinfo_path)
             .args(&["-h", "-o", "%P"])
             .output()
             .context("Failed to execute sinfo command")?;

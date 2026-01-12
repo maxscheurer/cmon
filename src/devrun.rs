@@ -70,12 +70,10 @@ pub struct DevrunArgs {
 }
 
 /// Main entry point for devrun command
-pub fn run_devrun(args: DevrunArgs) -> Result<()> {
-    let slurm = SlurmInterface::new();
-
+pub fn run_devrun(slurm: &SlurmInterface, args: DevrunArgs) -> Result<()> {
     if args.tui {
         // TUI mode: full interactive configuration
-        let config = configure_job_tui(&slurm, args)?;
+        let config = configure_job_tui(slurm, args)?;
         display_config(&config);
 
         if !confirm_execution()? {
@@ -86,7 +84,7 @@ pub fn run_devrun(args: DevrunArgs) -> Result<()> {
         execute_srun(config)
     } else {
         // CLI mode: standard flow with optional account selection
-        run_cli_mode(&slurm, args)
+        run_cli_mode(slurm, args)
     }
 }
 

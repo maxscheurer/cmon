@@ -330,7 +330,7 @@ fn main() -> Result<()> {
             })?;
         }
         Some(Commands::Devrun { args }) => {
-            devrun::run_devrun(args)?;
+            devrun::run_devrun(&slurm, args)?;
         }
         Some(Commands::Tui) => {
             tui::run()?;
