@@ -999,6 +999,40 @@ impl SlurmInterface {
 
         Ok(unique_partitions)
     }
+
+    /// Get list of partitions that have GPU resources available
+    ///
+    /// Mirrors the shell pipeline:
+    /// sinfo -N -o "%20N %10P %20G %10T" | grep "gpu:" | awk '{print $2}' | sort -u
+    pub fn get_gpu_partitions(&self) -> Result<Vec<String>> {
+        let sinfo_path = self.slurm_bin_path.join("sinfo");
+        let output = Command::new(sinfo_path)
+            .args(["-N", "-o", "%20N %10P %20G %10T"])
+            .output()
+            .context("Failed to execute sinfo command for GPU partitions")?;
+
+        if !output.status.success() {
+            anyhow::bail!("Failed to retrieve GPU partitions from SLURM");
+        }
+
+        let partitions: Vec<String> = String::from_utf8(output.stdout)
+            .context("Invalid UTF-8 in sinfo output")?
+            .lines()
+            .filter(|line| line.contains("gpu:"))
+            .filter_map(|line| {
+                line.split_whitespace()
+                    .nth(1)
+                    .map(|p| p.trim_end_matches('*').to_string())
+            })
+            .filter(|p| !p.is_empty())
+            .collect();
+
+        let mut unique_partitions: Vec<String> = partitions.into_iter().collect();
+        unique_partitions.sort();
+        unique_partitions.dedup();
+
+        Ok(unique_partitions)
+    }
 }
 
 /// Shorten node names by removing a configurable prefix

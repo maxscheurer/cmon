@@ -147,6 +147,7 @@ fn configure_job_tui(slurm: &SlurmInterface, args: DevrunArgs) -> Result<JobConf
     // Fetch accounts and partitions
     let accounts = slurm.get_accounts()?;
     let partitions = slurm.get_partitions()?;
+    let gpu_partitions = slurm.get_gpu_partitions()?;
 
     if accounts.is_empty() {
         anyhow::bail!("No accounts found.");
@@ -268,7 +269,7 @@ fn configure_job_tui(slurm: &SlurmInterface, args: DevrunArgs) -> Result<JobConf
     };
 
     // F. GPU/GRES Selection (Conditional)
-    let gres = if partition == "gpu" || partition == "fat" {
+    let gres = if gpu_partitions.contains(&partition) {
         let gres_options = vec![
             "No GPU",
             "gpu:1 (1 GPU)",
@@ -425,8 +426,9 @@ fn run_cli_mode(slurm: &SlurmInterface, mut args: DevrunArgs) -> Result<()> {
         args.account = Some(select_account_cli(slurm)?);
     }
 
-    // Handle GPU resources - default to gpu:1 for gpu and fat partitions
-    if args.gres.is_none() && (args.partition == "gpu" || args.partition == "fat") {
+    // Handle GPU resources - default to gpu:1 for detected GPU-capable partitions
+    let gpu_partitions = slurm.get_gpu_partitions()?;
+    if args.gres.is_none() && gpu_partitions.contains(&args.partition) {
         args.gres = Some("gpu:1".to_string());
     }
 
