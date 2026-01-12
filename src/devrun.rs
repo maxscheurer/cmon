@@ -385,7 +385,7 @@ fn confirm_execution() -> Result<bool> {
 /// Execute srun command with given configuration
 fn execute_srun(config: JobConfig) -> Result<()> {
     let mut cmd = Command::new("srun");
-    cmd.args(&[
+    cmd.args([
         "--pty",
         "-n", &config.ntasks.to_string(),
         "--ntasks", &config.ntasks.to_string(),
@@ -397,7 +397,7 @@ fn execute_srun(config: JobConfig) -> Result<()> {
     ]);
 
     if let Some(ref g) = config.gres {
-        cmd.args(&["--gres", g]);
+        cmd.args(["--gres", g]);
     }
 
     cmd.arg("bash");

@@ -938,7 +938,7 @@ impl SlurmInterface {
             .context("Could not determine username")?;
 
         let output = Command::new("sacctmgr")
-            .args(&[
+            .args([
                 "show", "user", "where", &format!("name={}", user),
                 "withassoc", "format=account%50", "-n", "-P"
             ])
@@ -972,7 +972,7 @@ impl SlurmInterface {
     pub fn get_partitions(&self) -> Result<Vec<String>> {
         let sinfo_path = self.slurm_bin_path.join("sinfo");
         let output = Command::new(sinfo_path)
-            .args(&["-h", "-o", "%P"])
+            .args(["-h", "-o", "%P"])
             .output()
             .context("Failed to execute sinfo command")?;
 
