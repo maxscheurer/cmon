@@ -16,6 +16,7 @@ Skip the `squeue -o` format strings and `sinfo` flag combinations. cmon gives yo
 - Filtered job views, sorting, and search without remembering flags
 - Interactive TUI with real-time updates and job management
 - Export to JSON/CSV for scripting and analysis
+- `cmon devrun` to launch interactive `srun` sessions without remembering flags
 
 <!-- TODO: Add GIF demo here -->
 
@@ -42,6 +43,8 @@ cargo build --release
 | `cmon tui` | Interactive TUI |
 | `cmon me` | Your jobs and stats |
 | `cmon down` | Problematic nodes |
+| `cmon devrun` | Interactive `srun` session launcher |
+| `cmon devrun --tui` | Interactive `srun` session launcher with TUI |
 
 All commands support `--watch <seconds>` for continuous refresh.
 
