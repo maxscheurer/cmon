@@ -191,7 +191,8 @@ fn configure_job_tui(slurm: &SlurmInterface, args: DevrunArgs) -> Result<JobConf
         .default(cpu_default)
         .interact()?;
 
-    let cpus = if cpu_selection == 7 {
+    let custom_cpu_index = cpu_options.len() - 1;
+    let cpus = if cpu_selection == custom_cpu_index {
         Input::<u32>::with_theme(&ColorfulTheme::default())
             .with_prompt("Enter custom CPU count")
             .validate_with(|input: &u32| -> Result<(), &str> {
