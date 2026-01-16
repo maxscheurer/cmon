@@ -949,14 +949,13 @@ impl SlurmInterface {
             anyhow::bail!("Failed to retrieve accounts from SLURM");
         }
 
-        let accounts: Vec<String> = String::from_utf8(output.stdout)
+        let mut unique_accounts: Vec<String> = String::from_utf8(output.stdout)
             .context("Invalid UTF-8 in sacctmgr output")?
             .lines()
             .map(|s| s.trim().to_string())
             .filter(|s| !s.is_empty())
             .collect();
 
-        let mut unique_accounts: Vec<String> = accounts.into_iter().collect();
         unique_accounts.sort();
         unique_accounts.dedup();
 
@@ -982,18 +981,17 @@ impl SlurmInterface {
             );
         }
 
-        let partitions: Vec<String> = String::from_utf8(output.stdout)
+        let mut unique_partitions: Vec<String> = String::from_utf8(output.stdout)
             .context("Invalid UTF-8 in sinfo output")?
             .lines()
             .map(|s| s.trim().trim_end_matches('*').to_string())  // Remove asterisk from default partition
             .filter(|s| !s.is_empty())
             .collect();
 
-        if partitions.is_empty() {
+        if unique_partitions.is_empty() {
             anyhow::bail!("No partitions found. Check your SLURM configuration.");
         }
 
-        let mut unique_partitions: Vec<String> = partitions.into_iter().collect();
         unique_partitions.sort();
         unique_partitions.dedup();
 
@@ -1015,7 +1013,7 @@ impl SlurmInterface {
             anyhow::bail!("Failed to retrieve GPU partitions from SLURM");
         }
 
-        let partitions: Vec<String> = String::from_utf8(output.stdout)
+        let mut unique_partitions: Vec<String> = String::from_utf8(output.stdout)
             .context("Invalid UTF-8 in sinfo output")?
             .lines()
             .filter(|line| line.contains("gpu:"))
@@ -1027,7 +1025,6 @@ impl SlurmInterface {
             .filter(|p| !p.is_empty())
             .collect();
 
-        let mut unique_partitions: Vec<String> = partitions.into_iter().collect();
         unique_partitions.sort();
         unique_partitions.dedup();
 
