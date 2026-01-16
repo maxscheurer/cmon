@@ -57,7 +57,7 @@ pub struct DevrunArgs {
     ntasks: u32,
 
     /// Number of nodes
-    #[arg(long = "nodes", default_value = "1")]
+    #[arg(short = 'N', long = "nodes", default_value = "1")]
     nodes: u32,
 
     /// Generic resources (default: gpu:1 for gpu/fat partitions)
@@ -388,7 +388,7 @@ fn execute_srun(config: JobConfig) -> Result<()> {
     let mut cmd = Command::new("srun");
     cmd.args([
         "--pty",
-        "-n", &config.ntasks.to_string(),
+        "--nodes", &config.nodes.to_string(),
         "--ntasks", &config.ntasks.to_string(),
         "--cpus-per-task", &config.cpus.to_string(),
         "-p", &config.partition,
@@ -404,8 +404,8 @@ fn execute_srun(config: JobConfig) -> Result<()> {
     cmd.arg("bash");
 
     // Show command being executed
-    let cmd_str = format!("srun --pty -n {} --ntasks {} --cpus-per-task {} -p {} --time {} --mem {} --account {}{}bash",
-        config.ntasks, config.ntasks, config.cpus, config.partition, config.time, config.mem, config.account,
+    let cmd_str = format!("srun --pty --nodes {} --ntasks {} --cpus-per-task {} -p {} --time {} --mem {} --account {}{}bash",
+        config.nodes, config.ntasks, config.cpus, config.partition, config.time, config.mem, config.account,
         if let Some(ref g) = config.gres { format!(" --gres {} ", g) } else { " ".to_string() }
     );
     println!("{} {}", "Command:".bright_black(), cmd_str.bright_black());
