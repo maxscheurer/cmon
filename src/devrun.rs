@@ -253,7 +253,7 @@ fn configure_job_tui(slurm: &SlurmInterface, args: DevrunArgs) -> Result<JobConf
         .default(time_default)
         .interact()?;
 
-    let time = if time_selection == 7 {
+    let time = if time_selection == time_options.len() - 1 {
         Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("Enter time in HH:MM:SS format")
             .validate_with(|input: &String| -> Result<(), &str> {
