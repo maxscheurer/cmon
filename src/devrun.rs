@@ -215,7 +215,7 @@ fn configure_job_tui(slurm: &SlurmInterface, args: DevrunArgs) -> Result<JobConf
         .default(mem_default)
         .interact()?;
 
-    let mem = if mem_selection == 6 {
+    let mem = if mem_selection == mem_options.len() - 1 {
         Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("Enter custom memory (e.g., 50Gb, 500Mb)")
             .validate_with(|input: &String| -> Result<(), &str> {
